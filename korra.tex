@@ -1,0 +1,120 @@
+
+\documentclass[letterpaper,twocolumn,10pt]{article}
+\usepackage{usenix,epsfig,endnotes}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage[skip=0pt]{subcaption}
+\usepackage[colorlinks=true,allcolors=blue,breaklinks]{hyperref}   % hyperlinks, including DOIs and URLs in bibliography
+
+\newcommand{\Idit}[1]{{\bf [[#1]]}}
+\newcommand{\inote}[1]{}
+\newcommand{\remove}[1]{}
+\newcommand{\comment}[1]{} 
+\newcommand{\sys}{Omid} 
+\newcommand{\figw}{0.925\columnwidth}
+
+\begin{document}
+
+\date{}
+
+\title{\Large \bf \sys, Reloaded: Scalable and Highly-Available Transaction Processing}
+
+\author{
+{\rm Ohad Shacham}\\
+	Yahoo Research
+	\and	
+\and
+{\rm Francisco Perez-Sorrosal}\\
+	Yahoo
+\and
+{\rm Edward Bortnikov}\\
+	Yahoo Research
+	\and
+{\rm Eshcar Hillel}\\
+	Yahoo Research
+	\and
+{\rm Idit Keidar}\\
+	Technion and Yahoo Research
+	\and
+{\rm Ivan Kelly}\\
+	Midokura
+\and
+{\rm Matthieu Morel}\\
+	Skyscanner
+\and
+{\rm Sameer Paranjpye}\\
+	Arimo
+} % end author
+
+
+\maketitle
+
+\subsection*{Abstract}
+
+We present \sys\ -- a transaction processing service that powers web-scale 
+production systems at Yahoo. \sys\ provides ACID transaction semantics on top of traditional 
+key-value storage; its implementation over Apache HBase is open sourced as part of Apache Incubator. 
+\sys\ can
+%is highly scalable. It 
+serve hundreds of thousands of transactions per second
+on standard mid-range hardware, while incurring minimal impact 
+on the speed of  data access  in the underlying key-value store. 
+Additionally, as expected from always-on production services, \sys\ is highly available. 
+
+\sys's database-neutral philosophy and real-world deployment considerations have
+led to unique design choices, including 
+managing (and in particular, scaling) compute and metadata storage of transaction management independently,
+and a novel high availability algorithm that runs  synchronization-free most of the time.
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+\label{sec:intro}
+\input{intro}
+
+\section{Design Principles and Architecture}
+\label{sec:design}
+\input{design}
+
+\input{relatedwork}
+
+\section{Service Semantics and Interface}
+\label{sec:semantics}
+\input{semantics}
+
+\section{Transaction Processing}
+\label{sec:protocol}
+\input{protocol}
+
+\section{High Availability}
+\label{sec:ha}
+\input{ha}
+
+\section{Evaluation}
+\label{sec:eval}
+\input{eval}
+
+\section{Lessons Learned and Future Work}
+\label{sec:lessons}
+
+\input{lessons}
+
+
+\subsection*{Acknowledgments}
+
+We acknowledge the many contributions to Omid, as concept and code, since its early days. 
+Our thanks go to Aran Bergman, Daniel Gomez Ferro, Yonatan Gottesman, Flavio Junqueira, Igor Katkov, Francis Christopher Liu, 
+Ralph Rabbat, Benjamin (Ben) Reed, Kostas Tsioutsiouliklis, Maysam Yabandeh, and the Sieve team at Yahoo.  We also thank 
+Dahlia Malkhi and the FAST reviewers for insightful comments.
+
+
+%%%%%%%%%%%%%%%%%%%%%
+%\clearpage
+\small
+{\bibliographystyle{acm}
+\bibliography{refs}}
+
+%%\theendnotes
+
+
+\end{document}

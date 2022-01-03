@@ -1,0 +1,271 @@
+
+
+We now explain how \sys's TM manages transactions so as to guarantee  SI semantics. For clarity of the exposition, we defer discussion of the TM's reliability  to the next section; for now, let us assume that this component never fails. 
+We describe \sys's data model in Section~\ref{ssec:data-model}, then proceed to describe the client operation in Section~\ref{ssec:client-side} and the TM's operation in Section~\ref{ssec:server-side}.
+
+\subsection{Data and metadata}
+\label{ssec:data-model}
+
+% Timestamps
+\sys\ employs optimistic concurrency control with commit-time conflict resolution. Intuitively, with SI, a transaction's reads all appear to occur at one logical point in time (namely, when it begins), while its writes appear to execute at a later point--- when it commits. \sys\ therefore associates two timestamps with each transaction: a \emph{read timestamp} $ts_r$ when it begins, and a \emph{commit timestamp} $ts_c$ upon commit. Both timestamps are provided by the TM using a logical clock it maintains. In addition, each transaction has a unique transaction id \emph{txid}, 
+for which we use the read timestamp; in order to ensure its uniqueness, the TM increments the clock whenever a transaction begins. 
+
+% Multi-versioning and snapshots 
+The data store is multi-versioned. A write operation by a transaction starting at some time $t$ needs to be associated with a version number that exceeds all those written by transactions that committed before time $t$. However, the version order among concurrent transactions that  attempt to update the same key is immaterial, since at least one of these transactions is doomed to abort. To ensure the former, 
+we use the writing transaction's \emph{txid}, which exceeds that of all previously committed transactions, as the version number. Multi-versioning is then used in conjunction with the read timestamp to ensure that a transaction's get operations observe a consistent snapshot of the data reflecting all updates by  transactions that committed before the reading transaction began. 
+
+% Atomic commit at the commit table
+Since transaction commit needs to be an atomic step, \sys\ tracks the list of committed transactions in a persistent
+ {\em Commit Table (CT)}, as shown in Table~\ref{table:data-model}, which in the current implementation is also stored in HBase.
+Each entry in the CT maps a committed transaction's \emph{txid} to its respective $ts_c$.
+When deciding to commit a transaction, the TM writes the $(txid, ts_c)$ pair to the CT, which makes the transaction durable, and is considered the commit point of the transaction.
+%Transactions' put operations write their information (with the $txid$) to the data store whereas 
+Gets refer to the CT using the $txid$ in the data record in order to find out if a read value has been committed or not.
+In case it has, they use the commit timestamp to decide whether the value appears in their snapshot.
+
+While checking the CT for every read ensures correctness, it imposes  communication costs and  contention on the CT.
+To avoid this overhead, \sys\ augments each record in the data store with a {\em commit field (cf)}, indicating whether the data is committed, and if it is, its commit timestamp.
+Initially the commit field is \emph{nil}, indicating that the write is \emph{tentative}, i.e., potentially uncommitted.
+Following a commit, the transaction updates the commit fields of its written data items with its $ts_c$, and then removes itself from the CT. 
+Only then, the transaction is considered complete. 
+%(although it has committed earlier).
+A background cleanup process helps old (crashed or otherwise slow) committed transactions complete.
+
+Table~\ref{table:data-model} shows an example of a key $k_1$ with two versions, the second of which is tentative.  
+%Note that each record consists of four fields \emph{(key, value, version, commit)}.
+A transaction that encounters a tentative write during a read still refers to the CT in order to find out whether the value has been committed. In case it has, it helps
+complete the transaction that wrote it by copying its $ts_c$ to the commit field. The latter is an optimization that might reduce accesses to the commit table by ensuing transactions.
+
+\begin{table}
+\begin{tabular}{|c|c|c|c| c| c | c|}
+\multicolumn{4}{c}{Data Table}&  \multicolumn{3}{r}{\hspace{1mm} Commit Table}\\
+\cline{1-4} \cline{6-7}
+key & value & version & commit & & \emph{txid} & commit \\
+ &  & (\emph{txid}) & (cf) & &  &  $ts$  \\
+\cline{1-4} \cline{6-7}
+$k_1$ & a & {\bf 5} & 7& & {\bf 5} & 7 \\
+\cline{6-7}
+$k_1$ & b & {\bf 8} & nil \\
+\cline{1-4}
+\end{tabular}
+
+\caption{{\bf \sys\ data and metadata}. Data is multi-versioned, with the $txid$ as the version number. The \emph{commit field} indicates whether the data is committed, and if so, its commit timestamp. The commit table (CT) maps incomplete committed transaction ids to their respective commit timestamps. Transaction 5 has already committed and updated cf for $k_1$, but has not yet removed itself from CT; transaction 8 is still pending.}
+\label{table:data-model}
+\end{table}
+
+\subsection{Client-side operation}
+\label{ssec:client-side}
+
+\begin{algorithm}[ht!]
+\begin{algorithmic}[1]
+\begin{small}
+\State local variables \emph{txid}, write-set
+%\Statex
+\Procedure{begin}{}
+\State \emph{txid} $\leftarrow$ {\sc tm.begin()}
+\State write-set $\leftarrow \emptyset$
+\EndProcedure
+%\Statex
+\Procedure{put}{key, value} 
+\State ds.put(key, value, $txid$, nil) \label{l:put}
+\State add 64-bit hash of key to write-set
+\EndProcedure
+%\Statex
+\Procedure{get}{key} 
+\For{rec $\leftarrow$ ds.get(key, versions down from $ts_r$)} \label{l:get_loop}
+   \If{rec.commit$\not=$nil} \Comment not tentative
+      \If{rec.commit $< ts_r$}  \State return rec.value  \label{l:get_found} \EndIf
+   \Else \Comment tentative
+      \State value $\leftarrow$ {\sc GetTentativeValue}(rec, key)
+      \If{value $\not=$nil}  
+	\State return value
+      \EndIf
+   \EndIf
+\EndFor
+\State return nil
+\EndProcedure
+%\Statex
+\Procedure{GetTentativeValue}{rec,key} \label{l:get_tentative}
+ \State lookup rec.version in CT
+ \If{present} \Comment  committed
+       \State update rec.commit \Comment helping 
+       \If{rec.commit $< ts_r$}  return rec.value \EndIf
+\Else
+\Comment re-read version not found in CT \label{l:get_reread}
+         \State  rec $ \leftarrow$ ds.get(key, rec.version) 
+         \If{rec.commit$\not=$nil $\wedge$ rec.commit $< ts_r$}  
+		\State return rec.value \EndIf %\EndIf
+\EndIf
+\State return nil
+\EndProcedure
+%\Statex
+\Procedure{commit}{}
+\State  $ts_c \leftarrow$ {\sc tm.commit}($txid$, write-set)
+\ForAll{$key$ in write-set}
+	\State rec $\leftarrow$ ds.get(key, $txid$)
+	\If{$ts_c = \bot$} \Comment abort
+		\State remove rec
+	\Else
+		\State rec.cf $\leftarrow ts_c$  
+	\EndIf
+\EndFor
+\State remove record with $txid$ from CT
+\EndProcedure
+\end{small}
+\algstore{omid}
+\end{algorithmic}
+\caption{\sys's client-side code.} 
+\label{fig:get-pseudocode}
+\end{algorithm} 
+
+% Flow
+Transactions proceed optimistically and are validated at commit time. In the course of a transaction, a client's get operations read a  snapshot 
+reflecting the data store state  at  
+their read timestamp, while put operations write tentative values with $txid$. 
+Since SI needs to detect only write-write conflicts, only the transaction's \emph{write-set} is tracked.
+%
+%The \sys\ transaction flow is depicted in Figure~\ref{fig:flow}, and proceeds as follows:
+The  operations, described in pseudocode in Algorithm~\ref{fig:get-pseudocode},   execute as follows:
+
+%\noindent
+{\bf Begin.} The client obtains from the TM a read timestamp $ts_r$, 
+which also becomes its transaction id ({\em txid}). 
+The TM ensures that this timestamp exceeds all the commit timestamps of committed transactions
+and precedes all commit timestamps that will be assigned to  committing transactions in the future.
+
+{\bf Put(key,val).} 
+The client adds  the tentative record 
+%\emph{(key, val, txid, nil)}  
+to the data store (line~\ref{l:put}) and tracks the key in its local \emph{write-set}.
+ To reduce  memory and communication overheads, we track $64$-bit hashes rather than  full keys. 
+
+{\bf Get(key).} A get 
+reads from the data store (via ds.get()) records pertaining to \emph{key} with versions smaller than $ts_r$, latest to earliest
+(line \ref{l:get_loop}),
+in search of the value written for this key by the latest transaction whose $ts_c$ does not exceed $ts_r$ (i.e., the latest version written by a transaction that committed before the current transaction began).
+% Since the version is the writing transaction's  read timestamp ($txid$), it provides a lower bound on the record's commit timestamp. 
+
+If the read value is committed with a commit timestamp lower than $ts_r$, it is returned (line~\ref{l:get_found}).
+Upon encountering a tentative record (with cf=\emph{nil}), the algorithm calls {\sc GetTentativeValue} (line~\ref{l:get_tentative}) 
+in order to search its $ts_c$ in the CT. 
+If this $txid$ was not yet written, % in the CT, 
+then it can safely be ignored, since it did not commit. However, 
+a subtle race could happen if the transaction has updated the commit timestamp 
+in the data store and then removed itself from the CT between the time the record was read and the time when the CT was checked.
+In order to discover this race, a record is re-read after its version is not found in the CT (line~\ref{l:get_reread}).
+In all cases, the first value encountered in the backward traversal
+with a commit timestamp lower than $ts_r$ is returned.
+
+{\bf Commit.} The client requests \emph{commit(txid, write-set)} from the TM.
+The TM assigns it a commit timestamp $ts_c$ and checks for conflicts. If there are none, it commits the transaction by writing  $(txid, ts_c)$ to the CT and returns a response. Following a successful commit,
+the client writes  $ts_c$ to 
+the commit fields of all the data items it wrote to (indicating that they are no longer tentative), and finally 
+deletes its record from the CT.
+%A client never leaves the data store in an inconsistent state. 
+Whether the commit is successful or not 
+a background process helps transactions to complete or cleans their uncommitted records from the data store, thereby overcoming client failures.
+
+\subsection{TM operation}
+\label{ssec:server-side}
+
+The TM uses an internal (thread-safe) clock to assign read and commit timestamps.
+Pseudocode for the TM's begin and commit functions is given in Algorithm~\ref{fig:commit-pseudocode}; both  
+operations increment the clock and return its new value. 
+Thus, read timestamps are unique and can serve as transaction ids. Begin returns once all transactions with smaller commit timestamps are finalized, 
+(i.e., written to the CT or aborted).
+
+Commit involves {compute} and  {I/O} aspects for conflict detection and CT update, resp.
+The TM uses a pipelined SEDA architecture~\cite{SEDAPhDThesis} that 
+scales each of these stages separately using multiple threads.
+Note that the I/O stage also benefits from such parallelism since the 
+%underlying data store holding the 
+CT can be sharded across multiple storage nodes and yield higher throughput when accessed in parallel.
+
+In order to increase throughput, writes to the commit table are batched. Both begin and commit operations need to wait for batched writes to complete before they can return -- begin waits for all smaller-timestamped transactions to be persisted, while commit waits for the committing transaction.
+Thus, batching introduces a tradeoff between I/O efficiency, (i.e., throughput), and begin/commit latency.
+
+The {\sc ConflictDetect}
+function checks for conflicts using a hash table in main memory.  (The TM's compute aspect is scaled by running multiple instances of this function for different transactions, accessing the same table in separate threads.)
+For the sake of conflict detection, every entry in the write-set is considered a \emph{key}, 
+(though in practice it is a $64$-bit hash of the appropriate key). 
+Each \emph{bucket} in the hash table holds an array of pairs, each consisting of a key hashed to this bucket 
+and  the $ts_c$  of the transaction that last wrote to this key.
+
+{\sc ConflictDetect} needs to (i) validate that none of the keys in the write-set have versions larger than $txid$ in the table, and (ii) if validation is successful, update the  table entries pertaining to the write-set to the transaction's newly assigned $ts_c$. However, this needs to be done atomically, so two transactions committing in parallel won't miss each other's updates. 
+Since holding a lock on the entire table 
+for the duration of the conflict detection procedure would severely limit concurrency, we instead limit the granularity of atomicity to a single bucket: for each key in the write-set, we lock the corresponding bucket (line~\ref{l:lock}), 
+check for conflicts in that bucket
+(line~\ref{l:conflict}), and if none are found, optimistically add the key with the new $ts_c$ to the bucket (lines~\ref{l:update-start}--\ref{l:update-end}). The latter might prove redundant in case the transaction ends up aborting due to a conflict it discovers later. However, since our abort rates are low, such spurious additions rarely induce additional aborts.
+
+\begin{algorithm}[htb]
+\begin{algorithmic}[1]
+\algrestore{omid}
+\begin{small}
+\Procedure{begin}{}
+\State $txid$ = Clock.FetchAndIncrement()
+\State wait until there are no pending commit operations 
+\State \hspace{18pt} with $ts_c < txid$
+\State return $txid$
+\EndProcedure
+\Statex
+\Procedure{commit}{$txid$, write-set}
+\State $ts_c \leftarrow$ Clock.FetchAndIncrement()
+\If{ConflictDetect($txid$, write-set) = {\sc commit}} 
+ \State UpdateCT($txid, ts_c$) \Comment proceed to I/O stage
+ \State return $ts_c$
+ \Else
+ \State return {\sc abort}
+\EndIf
+\EndProcedure
+\Statex
+\Procedure{ConflictDetect}{$txid$,write-set}
+\ForAll{key $\in$ write-set} 
+  \State b $\leftarrow$ key's bucket
+  \State lock b  \label{l:lock}
+  \State small $\leftarrow$ entry with smallest $ts$ in b
+  \If{$\exists$ (key, t) $\in $ b s.t.\ $t > txid$ } \Comment conflict  \label{l:conflict}
+    \State unlock b; return {\sc abort}
+  \EndIf
+  \Statex 
+  \Comment no conflict on key found -- update hash table 
+  \If{$\exists$ (key, t) $\in $ b s.t.\ $t < txid$ }  \label{l:update-start}
+    \State overwrite (key, t) with (key, $ts_c$)
+    \ElsIf{$\exists$ empty slot $s \in $ b }
+    \State write (key, $ts_c$) to $s$
+    \ElsIf{ small.$t \le txid$ } 
+	      \State overwrite small with (key, $ts_c$)  \label{l:update-end}
+     \Else  \Comment possible conflict  \label{l:possible-conflict}
+   \State unlock b; return {\sc abort}
+  \EndIf  
+\State unlock b
+\EndFor
+\State return {\sc commit}
+\EndProcedure
+\end{small}
+\algstore{omid}
+\end{algorithmic}
+\caption{TM functions.} 
+\label{fig:commit-pseudocode}
+\end{algorithm} 
+
+A second challenge is to limit the table size and garbage-collect information pertaining to old commits. Since a transaction need only check for conflicts with transactions whose $ts_c$ exceeds its $txid$, it is safe to remove all entries that have smaller commit times  than the $txid$ of the oldest active transaction. Unfortunately, this observation does not give rise to a feasible garbage collection rule:
+though transactions usually last few tens of milliseconds, there is no upper bound on  a transaction's life span, and no way to know whether a given outstanding transaction will ever attempt to commit or has failed. 
+Instead, we use the much simpler policy of restricting the number of entries in a bucket. Each bucket holds a fixed array of the most recent $(key, ts_c)$ pairs. In order to account for potential conflicts with older transactions, a transaction also aborts in case the minimal $ts_c$ in the bucket exceeds its $txid$ (line \ref{l:possible-conflict}). 
+In other words, a transaction expects to find, in every bucket it checks, at least one commit timestamp older than its start time or one empty slot, 
+and if it does not, it aborts.
+
+The size of the hash table is chosen so as to reduce the probability for spurious aborts, which is the probability of  all keys in a given bucket being replaced during a transaction's life span. 
+If the throughput is $T$ transactional updates per second, a bucket in a table with $e$ entries will overflow after $e/T$ seconds on average. For example, if $10$ million keys are updated per second, 
+a bucket in a one-million-entry table will overflow only after 100ms on average, which is much longer than most transactions. We further discuss the impact of the table size in Section~\ref{sec:eval}. 
+
+\paragraph{Garbage collection.} A dedicated background procedure ({\em co-processor}) cleans up old versions. To this end, the TM maintains 
+a \emph{low water mark}, which is used in two ways: (1) the co-processor scans data store entries, and keeps, for each key,
+the biggest version that is smaller than the low water mark along with all later versions. Lower versions are removed.
+(2) When a transaction attempts to commit, if its $txid$ is smaller than the low water mark, it aborts because the co-processor may 
+have removed versions that ought to have been included in its snapshot. 
+The TM attempts to increase the low water mark when the probability of such aborts is small.
+
+\remove{
+For example, at a throughput of $10$ million transactional updates per second, buckets in a table with one million entries, (for example, 62500 buckets of size 16),  will overflow only after 100ms on average, which is much longer than most transactions. Since both keys and timestamps are $8$ bytes long, the table size in this case is merely $16$MB, which easily fits in L2 caches in modern servers.  
+}
+

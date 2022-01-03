@@ -1,0 +1,219 @@
+\begin{thebibliography}{10}
+
+\bibitem{hbase}
+{Apache HBase}.
+\newblock \url{http://hbase.apache.org}.
+
+\bibitem{hbase-coproc}
+{Apache HBase Coprocessor Introduction}.
+\newblock \url{https://blogs.apache.org/hbase/entry/coprocessor_introduction}.
+
+\bibitem{phoenix}
+{Apache Phoenix}.
+\newblock \url{https://phoenix.apache.org}.
+
+\bibitem{zookeeper}
+{Apache Zookeeper}.
+\newblock \url{http://zookeeper.apache.org}.
+
+\bibitem{cockroach}
+{CockroachDB}.
+\newblock
+  \url{https://github.com/cockroachdb/cockroach/blob/master/docs/design.md}.
+
+\bibitem{Tephra}
+{Tephra: {T}ransactions for {A}pache {HB}ase}.
+\newblock \url{https://tephra.io}.
+
+\bibitem{Aguilera2015}
+{\sc Aguilera, M.~K., Leners, J.~B., and Walfish, M.}
+\newblock Yesquel: Scalable sql storage for web applications.
+\newblock In {\em Proceedings of the 25th Symposium on Operating Systems
+  Principles\/} (2015), SOSP '15, pp.~245--262.
+
+\bibitem{Aguilera2007}
+{\sc Aguilera, M.~K., Merchant, A., Shah, M., Veitch, A., and Karamanolis, C.}
+\newblock Sinfonia: A new paradigm for building scalable distributed systems.
+\newblock {\em SIGOPS Oper. Syst. Rev. 41}, 6 (Oct. 2007), 159--174.
+
+\bibitem{Megastore}
+{\sc Baker, J., Bond, C., Corbett, J.~C., Furman, J., Khorlin, A., Larson, J.,
+  Leon, J.-M., Li, Y., Lloyd, A., and Yushprakh, V.}
+\newblock Megastore: Providing scalable, highly available storage for
+  interactive services.
+\newblock In {\em Proceedings of the Conference on Innovative Data system
+  Research (CIDR)\/} (2011), pp.~223--234.
+
+\bibitem{BalakrishnanMDPWW13}
+{\sc Balakrishnan, M., Malkhi, D., Davis, J.~D., Prabhakaran, V., Wei, M., and
+  Wobber, T.}
+\newblock {CORFU:} {A} distributed shared log.
+\newblock {\em {ACM} Trans. Comput. Syst. 31}, 4 (2013), 10.
+
+\bibitem{Balakrishnan2013}
+{\sc Balakrishnan, M., Malkhi, D., Wobber, T., Wu, M., Prabhakaran, V., Wei,
+  M., Davis, J.~D., Rao, S., Zou, T., and Zuck, A.}
+\newblock Tango: Distributed data structures over a shared log.
+\newblock In {\em Proceedings of the Twenty-Fourth ACM Symposium on Operating
+  Systems Principles\/} (2013), SOSP '13, pp.~325--340.
+
+\bibitem{DBLP:conf/sigmod/BerensonBGMOO95}
+{\sc Berenson, H., Bernstein, P.~A., Gray, J., Melton, J., O'Neil, E.~J., and
+  O'Neil, P.~E.}
+\newblock A critique of {ANSI} {SQL} isolation levels.
+\newblock In {\em Proceedings of the 1995 {ACM} {SIGMOD} International
+  Conference on Management of Data, San Jose, California, May 22-25, 1995.\/}
+  (1995), pp.~1--10.
+
+\bibitem{Hyder}
+{\sc Bernstein, P.~A., Reid, C.~W., and Das, S.}
+\newblock Hyder - a transactional record manager for shared flash.
+\newblock In {\em CIDR\/} (January 2011), pp.~9--20.
+
+\bibitem{Cahill2008}
+{\sc Cahill, M.~J., Rohm, U., and Fekete, A.}
+\newblock Serializable isolation for snapshot databases.
+\newblock In {\em SIGMOD\/} (2008), pp.~729--738.
+
+\bibitem{Camargos07sprint}
+{\sc Camargos, L.}
+\newblock Sprint: a middleware for high-performance transaction processing.
+\newblock In {\em In EuroSys ’07: Proceedings of the ACM SIGOPS/EuroSys Eu
+  Conference on Computer Systems 2007\/} (2007), ACM, pp.~385--398.
+
+\bibitem{Chang2008}
+{\sc Chang, F., Dean, J., Ghemawat, S., Hsieh, W.~C., Wallach, D.~A., Burrows,
+  M., Chandra, T., Fikes, A., and Gruber, R.~E.}
+\newblock Bigtable: A distributed storage system for structured data.
+\newblock {\em ACM Trans. Comput. Syst. 26}, 2 (June 2008), 4:1--4:26.
+
+\bibitem{Spanner2012}
+{\sc Corbett, J.~C., Dean, J., Epstein, M., Fikes, A., Frost, C., Furman, J.,
+  Ghemawat, S., Gubarev, A., Heiser, C., Hochschild, P., Hsieh, W., Kanthak,
+  S., Kogan, E., Li, H., Lloyd, A., Melnik, S., Mwaura, D., Nagle, D., Quinlan,
+  S., Rao, R., Rolig, L., Saito, Y., Szymaniak, M., Taylor, C., Wang, R., and
+  Woodford, D.}
+\newblock Spanner: Google{\textquoteright}s globally-distributed database.
+\newblock In {\em 10th USENIX Symposium on Operating Systems Design and
+  Implementation (OSDI 12)\/} (2012), pp.~261--264.
+
+\bibitem{Cowling2012}
+{\sc Cowling, J., and Liskov, B.}
+\newblock Granola: Low-overhead distributed transaction coordination.
+\newblock In {\em Proceedings of the 2012 USENIX Conference on Annual Technical
+  Conference\/} (2012), USENIX ATC'12, pp.~21--21.
+
+\bibitem{Dragojevic2014}
+{\sc Dragojevi{\'c}, A., Narayanan, D., Castro, M., and Hodson, O.}
+\newblock Farm: Fast remote memory.
+\newblock In {\em 11th USENIX Symposium on Networked Systems Design and
+  Implementation (NSDI 14)\/} (Apr. 2014), pp.~401--414.
+
+\bibitem{Dragojevic2015}
+{\sc Dragojevi\'{c}, A., Narayanan, D., Nightingale, E.~B., Renzelmann, M.,
+  Shamis, A., Badam, A., and Castro, M.}
+\newblock No compromises: Distributed transactions with consistency,
+  availability, and performance.
+\newblock In {\em Proceedings of the 25th Symposium on Operating Systems
+  Principles\/} (2015), SOSP '15, pp.~54--70.
+
+\bibitem{Escriva2012}
+{\sc Escriva, R., Wong, B., and Sirer, E.~G.}
+\newblock Hyperdex: A distributed, searchable key-value store.
+\newblock In {\em Proceedings of the ACM SIGCOMM 2012 Conference on
+  Applications, Technologies, Architectures, and Protocols for Computer
+  Communication\/} (2012), SIGCOMM '12, pp.~25--36.
+
+\bibitem{Warp}
+{\sc Escriva, R., Wong, B., and Sirer, E.~G.}
+\newblock Warp: Lightweight multi-key transactions for key-value stores.
+\newblock {\em CoRR abs/1509.07815\/} (2015).
+
+\bibitem{eyal2013ordering}
+{\sc Eyal, I., Birman, K., Keidar, I., and van Renesse, R.}
+\newblock Ordering transactions with prediction in distributed object stores.
+\newblock In {\em LADIS\/} (2013).
+
+\bibitem{FeketeTODS2005}
+{\sc Fekete, A., Liarokapis, D., O'Neil, E., Neil, P.~O., and Shasha, D.}
+\newblock Making snapshot isolation serializable.
+\newblock {\em ACM TODS 30\/} (2005), 492--528.
+
+\bibitem{OmidICDE2014}
+{\sc Ferro, D.~G., Junqueira, F., Kelly, I., Reed, B., and Yabandeh, M.}
+\newblock Omid: Lock-free transactional support for distributed data stores.
+\newblock In {\em {IEEE} 30th International Conference on Data Engineering,
+  Chicago, {ICDE} 2014, IL, USA, March 31 - April 4, 2014\/} (2014),
+  pp.~676--687.
+
+\bibitem{DBLP:conf/sigmod/GrayHOS96}
+{\sc Gray, J., Helland, P., O'Neil, P.~E., and Shasha, D.}
+\newblock The dangers of replication and a solution.
+\newblock In {\em Proceedings of the 1996 {ACM} {SIGMOD} International
+  Conference on Management of Data, Montreal, Quebec, Canada, June 4-6,
+  1996.\/} (1996), pp.~173--182.
+
+\bibitem{Gray:1992:TPC:573304}
+{\sc Gray, J., and Reuter, A.}
+\newblock {\em Transaction Processing: Concepts and Techniques}, 1st~ed.
+\newblock Morgan Kaufmann Publishers Inc., San Francisco, CA, USA, 1992.
+
+\bibitem{Kraska2013}
+{\sc Kraska, T., Pang, G., Franklin, M.~J., Madden, S., and Fekete, A.}
+\newblock Mdcc: Multi-data center consistency.
+\newblock In {\em Proceedings of the 8th ACM European Conference on Computer
+  Systems\/} (2013), EuroSys '13, pp.~113--126.
+
+\bibitem{Lamport:1998:PP:279227.279229}
+{\sc Lamport, L.}
+\newblock The part-time parliament.
+\newblock {\em ACM Trans. Comput. Syst. 16}, 2 (May 1998), 133--169.
+
+\bibitem{PattersonENAA12}
+{\sc Patterson, S., Elmore, A.~J., Nawab, F., Agrawal, D., and Abbadi, A.~E.}
+\newblock Serializability, not serial: Concurrency control and availability in
+  multi-datacenter datastores.
+\newblock In {\em PVLDB\/} (2012), vol.~5, pp.~1459--1470.
+
+\bibitem{Percolator2010}
+{\sc Peng, D., and Dabek, F.}
+\newblock Large-scale incremental processing using distributed transactions and
+  notifications.
+\newblock In {\em 9th USENIX Symposium on Operating Systems Design and
+  Implementation (OSDI 10)\/} (2010).
+
+\bibitem{Thomson2012}
+{\sc Thomson, A., Diamond, T., Weng, S.-C., Ren, K., Shao, P., and Abadi,
+  D.~J.}
+\newblock Calvin: Fast distributed transactions for partitioned database
+  systems.
+\newblock In {\em Proceedings of the 2012 ACM SIGMOD International Conference
+  on Management of Data\/} (2012), SIGMOD '12, pp.~1--12.
+
+\bibitem{Wei2015}
+{\sc Wei, X., Shi, J., Chen, Y., Chen, R., and Chen, H.}
+\newblock Fast in-memory transaction processing using {RDMA} and {HTM}.
+\newblock In {\em Proceedings of the 25th Symposium on Operating Systems
+  Principles\/} (2015), SOSP '15, pp.~87--104.
+
+\bibitem{SEDAPhDThesis}
+{\sc Welsh, M.}
+\newblock {\em An Architecture for Highly Concurrent, Well-Conditioned Internet
+  Services}.
+\newblock PhD thesis, University of California, Berkeley, 2002.
+
+\bibitem{YabandehCritique2012}
+{\sc Yabandeh, M., and Gomez-Ferro, D.}
+\newblock A critique of snapshot isolation.
+\newblock In {\em Proceedings of the 7th ACM European Conference on Computer
+  Systems\/} (2012), EuroSys '12, pp.~155--168.
+
+\bibitem{DBLP:conf/sosp/ZhangSSKP15}
+{\sc Zhang, I., Sharma, N.~K., Szekeres, A., Krishnamurthy, A., and Ports, D.
+  R.~K.}
+\newblock Building consistent transactions with inconsistent replication.
+\newblock In {\em Proceedings of the 25th Symposium on Operating Systems
+  Principles, {SOSP} 2015, Monterey, CA, USA, October 4-7, 2015\/} (2015),
+  E.~L. Miller and S.~Hand, Eds., {ACM}, pp.~263--278.
+
+\end{thebibliography}

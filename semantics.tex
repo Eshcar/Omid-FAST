@@ -1,0 +1,44 @@
+
+\sys\ provides transactional access to a large collection of persistent data items identified by unique keys. 
+The service is persistent and highly available, 
+whereas its clients are ephemeral, i.e., they are alive only when performing operations and may fail at any time.
+We now discuss the semantics and API \sys\ offers.
+
+{\paragraph{Semantics.} 
+A \emph{transaction} is a sequence of put and get operations on different objects that ensures the so-called ACID properties:
+\emph{atomicity} (all-or-nothing execution), \emph{consistency} (preserving each object's semantics), 
+\emph{isolation} (in that concurrent transactions do not see each other's partial updates), and 
+\emph{durability} (whereby updates survive crashes).
+
+Different isolation levels can be considered for the third property. \sys\ opts for  snapshot isolation~\cite{DBLP:conf/sigmod/BerensonBGMOO95}, which is provided by popular database technologies such as Oracle, PostgreSQL, and SQL Server. 
+Intuitively, SI ensures that the information a transaction retrieves from the database 
+does not mix old and new values. For example, if a task updates the values of two stocks, then no other transaction may observe the old value of one of these stocks and the new value of the other. 
+%
+More precisely, SI enforces a total order on committed transactions according to their commit times so that 
+
+\begin{enumerate}
+    \setlength{\itemsep}{0pt}
+    \setlength{\parskip}{0pt}
+    \setlength{\parsep}{2pt}  
+\item
+each transaction's get operations see a consistent snapshot of the database reflecting put operations by
+ exactly those transactions that committed prior to the transaction's start time; and 
+\item
+ a transaction commits only if none of the items it updates has been modified since that snapshot.
+ \end{enumerate}
+Note that under SI,  concurrent transactions conflict only if they  \emph{update} the same item, whereas with 
+serializability, a transaction that updates an item conflicts with transactions that \emph{get} that item. Thus, for read-dominated workloads, SI is amenable to implementations (using multi-versioned concurrency control) that 
+allow more concurrency than serializable ones, and hence scale better.
+
+\paragraph{API.} 
+\sys's client API offers abstractions both for control (\emph{begin, commit}, and \emph{abort}) and for data access (\emph{get} and \emph{put}). Programmers  delineate transactions via the begin and commit APIs: 
+the sequence of get and put operations a client invokes between begin and  commit pertains to one transaction.
+Following a commit call, the transaction may successfully \emph{commit}, whereby all of its operations take effect;
+in case of conflicts, (i.e., when two concurrent transactions attempt to update the same item), the transaction may
+\emph{abort}, in which case none of its changes take effect. An abort may also be initiated by the programmer, e.g., 
+on encountering an error. Applications typically retry a transaction upon (either type of) abort. 
+\sys's API is offered by a client library, which accesses the data directly in the data store, and interacts with the TM only to begin, commit, or abort transactions. 
+
+
+
+

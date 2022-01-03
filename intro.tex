@@ -1,0 +1,88 @@
+
+% Transactions run the world
+In recent years, there is an increased focus on supporting large-scale distributed transaction processing;
+examples include~\cite{Tephra,Aguilera2015,Balakrishnan2013,Spanner2012,Cowling2012,Dragojevic2015,Kraska2013}.
+Transaction systems have many industrial applications, and the need for them is on the rise in the big data world. 
+One prominent use case is Internet-scale data processing pipelines, for example, real-time indexing for 
+web search~\cite{Percolator2010}. Such systems process information in a streamed fashion, and use shared storage 
+in order to facilitate communication between processing stages. Quite often, the different stages process  
+data items in parallel, and their execution is subject to data races. Overcoming such race conditions at the application 
+level is notoriously complex; the system design is greatly simplified by using the abstraction of transactions with 
+well-defined {\em atomicity}, {\em consistency}, {\em isolation}, and {\em durability} (ACID) semantics~\cite{Gray:1992:TPC:573304}. 
+
+% Drum roll - \sys\
+We present \sys, an ACID transaction processing system for key-value stores. 
+Omid has replaced an initial prototype bearing the same name, 
+to which we refer here as Omid1~\cite{OmidICDE2014}, as Yahoo's transaction processing engine; 
+it has  been entirely re-designed for scale and reliability, thereby bearing little resemblance with the origin (as discussed 
+in Section~\ref{sec:related} below). 
+\sys's open source version  recently became an Apache Incubator project\footnote{\url{http://omid.incubator.apache.org}}. 
+  
+\remove{
+Though an initial prototype bearing the same name was presented in the past~\cite{OmidICDE2014}, that prototype was not scalable, as it 
+duplicated the entire transaction history at all clients. Moreover, that work did not offer any measures for tolerating server failures.
+We present here the current \sys\ system, which has  been entirely re-designed for scale, reliability, and high availability,
+thereby bearing little resemblance with the origin. 
+}
+Internally, \sys\ powers Sieve\footnote{\url{http://yahoohadoop.tumblr.com/post/129089878751}}, 
+Yahoo's web-scale content management platform for search and personalization products. Sieve
+employs thousands of tasks to digest billions of events per day from a variety of feeds
+and push them into a real-time index in a matter of seconds. In this use case, 
+tasks need to execute as ACID transactions at a high throughput~\cite{Percolator2010}. 
+
+
+% Consideration 1: DB-neutrality
+The system design has been driven by several important business and deployment considerations. 
+First, 
+%it was intended for  an environment where persistent key-value stores had already been used. 
+guided by the principle of separation of concerns, \sys\ was designed to leverage  
+battle-tested key-value store 
+technology and support transactions over data stored therein, similar to other industrial 
+efforts~\cite{Tephra, Percolator2010, Spanner2012}.
+While \sys's design is  compatible with multiple NoSQL key-value stores,
+the current implementation 
+works with Apache HBase~\cite{hbase}. 
+
+% Consideration 1: simplicity
+A second consideration was  simplicity, in order to make the service easy to deploy, support, 
+maintain, and monitor in production. This has led to a design based on a centralized \emph{transaction manager} ({\em TM})\footnote{\small{The TM is referred to as Transaction Status Oracle (TSO) in the open source code and documentation.}}.
+While its clients and data storage nodes are  widely-distributed and fault-prone, 
+\sys's centralized TM provides a single source of truth regarding the transaction history, and facilitates
+%lock-free 
+conflict resolution among updating transactions (read-only transactions never cause aborts).
+
+% Contributions
+Within these constraints, it then became necessary to find novel ways to make the service scalable for throughput-oriented workloads,
+and to ensure its continued availability  following failures of clients, storage nodes, and the TM. 
+\sys's main contribution is in providing these features:
+\begin{description}
+\item[Scalability]
+\sys\ runs hundreds of thousands of transactions per second over multi-petabyte shared storage.
+%A number of aspects of \sys's design contribute to its scalability. First, 
+As in other industrial systems~\cite{Percolator2010,OmidICDE2014,Tephra}, scalability is improved by
+providing {\em snapshot isolation\/} (SI) rather than serializability~\cite{Gray:1992:TPC:573304} and separating 
+data management from control. Additionally, \sys\ employs a unique combination of design choices in the control plane:
+(i) synchronization-free transaction processing by a single TM, 
+(ii) scale-up of the TM's in-memory conflict detection 
+(deciding which transactions may commit) on multi-core hardware, 
+and
+(iii) scale-out (and scale-up) of metadata update (HBase).
+\item[High availability]
+The data tier is available by virtue of HBase's reliability, and the TM is implemented as a primary-backup process pair with shared access to critical 
+metadata. 
+Our solution is unique in 
+%allowing fast failover by 
+tolerating a potential overlap period when two processes act as primaries,  and
+at the same time avoiding costly synchronization (consensus), as long as a single primary is active. 
+Note that, being generic, the data tier is not aware of the choice of primary and hence serves operations of both TMs in case of such overlap.
+\end{description}
+
+% Roadmap
+%The rest of this paper is structured as follows:
+We discuss \sys's design considerations in Section~\ref{sec:design}
+and related transaction processing systems in Section~\ref{sec:related}.
+We detail the system guarantees in Section~\ref{sec:semantics}. Section~\ref{sec:protocol} describes \sys's 
+transaction protocol, and Section~\ref{sec:ha} discusses high-availability. An empirical evaluation is given 
+in Section~\ref{sec:eval}. We conclude, in Section~\ref{sec:lessons}, by discussing lessons learned from \sys's production 
+deployment and our interaction with the open source community, as well as future developments these lessons point to. 
+% Finally, Section~\ref{sec:discussion} concludes the paper.

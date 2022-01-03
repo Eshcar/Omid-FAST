@@ -1,0 +1,39 @@
+\section{Related Work}
+\label{sec:related}
+
+Distributed transaction processing has been the focus of much interest in recent years. Most academic-oriented papers~\cite{Aguilera2015, Aguilera2007, Balakrishnan2013, Cowling2012, Dragojevic2015, Thomson2012, DBLP:conf/sosp/ZhangSSKP15} build full-stack solutions, 
+which include transaction processing as well as a data tier. Some new protocols exploit advanced hardware trends like RDMA and HTM~\cite{Dragojevic2014, Dragojevic2015, Wei2015}. Generally speaking, these solutions do not attempt to maintain separation of concerns between different layers of the software stack, neither in terms of backward compatibility nor in terms of development efforts. They mostly provide strong consistency properties such as serializability.
+% or even strict serializability.
+
+On the other hand, production systems such as Google's Spanner~\cite{Spanner2012}, Megastore~\cite{Megastore} and Percolator~\cite{Percolator2010}, 
+Yahoo's Omid1~\cite{OmidICDE2014},  Cask's Tephra~\cite{Tephra}, 
+and more~\cite{Warp,PattersonENAA12,cockroach}, are inclined towards separating the responsibilities of each layer. These  systems, like the current work, reuse 
+an existing persistent highly-available data-tier;
+%, which is already deployed and used in production.
+for example, Megastore is layered on top of Bigtable~\cite{Chang2008},  Warp~\cite{Warp} uses HyperDex~\cite{Escriva2012},
+and CockroachDB~\cite{cockroach} uses RocksDB. 
+
+\sys\ most closely resembles Tephra~\cite{Tephra} and Omid1~\cite{OmidICDE2014}, which also run on top of a distributed key-value store and leverage a centralized TM (sometimes called \emph{oracle}) for timestamp allocation and conflict resolution. 
+However, 
+Omid1 and Tephra  store all the information about committed and aborted transactions in the TM's RAM, and  proactively duplicate it to every client that begins a transaction (in order to allow the client to determine locally which non-committed data should be excluded from its reads). 
+This approach is not scalable, as the information sent to clients can consist of many megabytes. 
+\sys\ avoids such bandwidth overhead by storing pertinent information in a metadata table that clients can access as needed.
+Our performance measurements in Section~\ref{sec:eval} below show that \sys\ significantly out-performs Omid1, whose design is very close to Tephra's. 
+For high availability, Tephra and Omid1 use a write-ahead log, which entails long recovery times for replaying the log; 
+\sys, instead, reuses the inherent availability of the underlying key-value store, and  hence recovers quickly from  failures.
+
+Percolator also uses a centralized ``oracle'' for timestamp allocation but  resolves conflicts via two-phase commit, whereby 
+clients lock database records rendering them inaccessible to other transactions;
+the Percolator paper does not discuss high availability. Other systems like Spanner and CockroachDB allot globally increasing
+timestamps using a (somewhat) synchronized clock service. Spanner also uses two-phase commit whereas CockroachDB uses
+distributed conflict resolution where read-only transactions can cause concurrent update transactions to abort. In contrast, \sys\ never locks
+(or prevents access to) a database record, and never aborts due to conflicts with read-only transactions.
+
+The use cases production systems serve allow them to provide SI~\cite{Percolator2010,OmidICDE2014,Tephra,cockroach}, at least for read-only transactions~\cite{Spanner2012}. It is nevertheless straightforward to 
+extend \sys\ to provide serializability, similarly to a serializable extension of Omid1~\cite{YabandehCritique2012} and Spanner~\cite{Spanner2012}; 
+it is merely a matter of extending the conflict analysis to cover read-sets~\cite{FeketeTODS2005,Cahill2008}, which may degrade performance. 
+
+A number of other recent efforts avoid the complexity of two-phase commit~\cite{DBLP:conf/sigmod/GrayHOS96} by serializing 
+transactions using a global serialization service such as highly-available log~\cite{Balakrishnan2013, eyal2013ordering, Hyder} or totally-ordered multicast~\cite{Camargos07sprint}. \sys\ is unique in utilizing a single transaction manager to resolve conflicts in a scalable way. 
+
+

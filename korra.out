@@ -1,0 +1,20 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Design Principles and Architecture}{}% 2
+\BOOKMARK [1][-]{section.3}{Related Work}{}% 3
+\BOOKMARK [1][-]{section.4}{Service Semantics and Interface}{}% 4
+\BOOKMARK [1][-]{section.5}{Transaction Processing}{}% 5
+\BOOKMARK [2][-]{subsection.5.1}{Data and metadata}{section.5}% 6
+\BOOKMARK [2][-]{subsection.5.2}{Client-side operation}{section.5}% 7
+\BOOKMARK [2][-]{subsection.5.3}{TM operation}{section.5}% 8
+\BOOKMARK [1][-]{section.6}{High Availability}{}% 9
+\BOOKMARK [2][-]{subsection.6.1}{Failover and concurrent TMs}{section.6}% 10
+\BOOKMARK [2][-]{subsection.6.2}{Basic HA algorithm}{section.6}% 11
+\BOOKMARK [2][-]{subsection.6.3}{Synchronization-free normal operation}{section.6}% 12
+\BOOKMARK [1][-]{section.7}{Evaluation}{}% 13
+\BOOKMARK [2][-]{subsection.7.1}{End-to-end performance in production}{section.7}% 14
+\BOOKMARK [2][-]{subsection.7.2}{TM microbenchmarks}{section.7}% 15
+\BOOKMARK [3][-]{subsubsection.7.2.1}{Commit table scalability}{subsection.7.2}% 16
+\BOOKMARK [3][-]{subsubsection.7.2.2}{Conflict detection scalability}{subsection.7.2}% 17
+\BOOKMARK [3][-]{subsubsection.7.2.3}{Latency-throughput tradeoff}{subsection.7.2}% 18
+\BOOKMARK [3][-]{subsubsection.7.2.4}{High availability}{subsection.7.2}% 19
+\BOOKMARK [1][-]{section.8}{Lessons Learned and Future Work}{}% 20

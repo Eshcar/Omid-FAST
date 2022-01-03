@@ -1,0 +1,43 @@
+
+\sys\ was originally designed as a foundational building block for Sieve -- Yahoo's next-generation content 
+management platform. 
+%Sieve ingests new content, and indexes it for search through a variety of processing steps in the real time. 
+The need for transactions emerges in scenarios similar to Percolator~\cite{Percolator2010}.  
+Analogously to other data pipelines, Sieve is more throughput-sensitive than latency-sensitive. This has led 
+to a design that trades off latency for throughput via batching.
+%, and scales the service on a single dedicated TM. 
+The original design of Omid1~\cite{OmidICDE2014} did not employ a CT, but instead had the TM send clients information
+about all pending transactions. This design was abandoned due to limited scalability in the number of clients,
+ and was replaced by \sys, which uses the CT to track transaction states. The CT may be sharded for I/O scalability, 
+but its update rate is bounded by the resources of the single (albeit multi-threaded) TM; this is mitigated by batching.
+%which is a good fit for throughput-oriented applications like Sieve.
+
+%Once \sys\ has been released to open source and became an Apache Incubator project, new use cases began to arise. 
+Since becoming an Apache Incubator project, Omid is witnessing increased interest, in a variety of use cases. 
+Together with Tephra, it is being considered for use by Apache Phoenix -- an emerging OLTP SQL engine over HBase 
+storage~\cite{phoenix}. In that context, latency has increased importance. We are therefore developing a low-latency 
+version of \sys\, that has clients update the CT instead of the TM, which eliminates the need for batching and allows 
+throughput scaling without sacrificing latency. Similar approaches have been used in Percolator~\cite{Percolator2010}, 
+Corfu~\cite{BalakrishnanMDPWW13}, and CockroachDB~\cite{cockroach}. We note, however, that such decentralization 
+induces extra synchronization oerhead at commit time and  may increase aborts (in particular, reads may induce aborts); 
+the original design may be preferable for throughput-oriented systems.
+
+%A second example, also raised by HortonWorks, was deploying the TM on a non-dedicated machine. Whereas in Sieve each TM runs
+%on a dedicated server, there are use cases where \sys\ is just one of many deployed applications, each handling low traffic. 
+%This has led us to develop a less CPU-intensive  version of the TM (with no busy waiting for messages) for the open-source project.
+
+Another development %driven by feedback from the open-source community 
+is using application semantics to reduce conflict detection. Specifically, some applications can identify scenarios where conflicts 
+need not be checked because the use case ensures that they won't happen. Consider, e.g., a massive table load, where records 
+are inserted sequentially, hence no conflicts can arise. Another example is a secondary index update, which is guaranteed
+to induce no conflict given that the primary table update by the same transaction has been successful. 
+To reduce overhead in such cases, we plan to extend the write API to indicate which written keys need
+to be tracked for conflict detection. 
+
+%Finally, it may be useful to integrate \sys\ with other persistent multi-versioned key-value stores.%, or use 
+%the system to provide ACID transactions along with high-level access abstractions, e.g., a relational database over HBase~\cite{phoenix}. 
+On the scalability side, faster technologies may be considered to maintain \sys's commit metadata.  In particular, since \sys's commit table 
+is usually written sequentially and infrequently read, it might be more efficient to use log-structured storage that is better optimized for the 
+above scenario. Modern hardware (e.g., SSD storage, RDMA networks)  could bring further speedups. 
+
+

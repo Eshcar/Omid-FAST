@@ -1,0 +1,214 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{Tephra}
+\citation{Aguilera2015}
+\citation{Balakrishnan2013}
+\citation{Spanner2012}
+\citation{Cowling2012}
+\citation{Dragojevic2015}
+\citation{Kraska2013}
+\citation{Percolator2010}
+\citation{Gray:1992:TPC:573304}
+\citation{OmidICDE2014}
+\citation{Percolator2010}
+\citation{Tephra}
+\citation{Percolator2010}
+\citation{Spanner2012}
+\citation{hbase}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}}
+\newlabel{sec:intro}{{1}{1}{Introduction}{section.1}{}}
+\citation{Percolator2010}
+\citation{OmidICDE2014}
+\citation{Tephra}
+\citation{Gray:1992:TPC:573304}
+\citation{hbase-coproc}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Design Principles and Architecture}{2}{section.2}}
+\newlabel{sec:design}{{2}{2}{Design Principles and Architecture}{section.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces {\bf  Omid\ architecture}. Clients manipulate data that resides in data tables in the underlying multi-versioned persistent data store (for example, HBase) and use the TM in the control path for conflict detection. Only the primary TM is active, and the backup is in hot standby mode. The TM maintains persistent metadata in the data store as well as separately managed recovery state (for example, using Zookeeper).\relax }}{2}{figure.caption.2}}
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:Omid_Architecture}{{1}{2}{{\bf \sys \ architecture}. Clients manipulate data that resides in data tables in the underlying multi-versioned persistent data store (for example, HBase) and use the TM in the control path for conflict detection. Only the primary TM is active, and the backup is in hot standby mode. The TM maintains persistent metadata in the data store as well as separately managed recovery state (for example, using Zookeeper).\relax }{figure.caption.2}{}}
+\citation{zookeeper}
+\citation{Aguilera2015}
+\citation{Aguilera2007}
+\citation{Balakrishnan2013}
+\citation{Cowling2012}
+\citation{Dragojevic2015}
+\citation{Thomson2012}
+\citation{DBLP:conf/sosp/ZhangSSKP15}
+\citation{Dragojevic2014}
+\citation{Dragojevic2015}
+\citation{Wei2015}
+\citation{Spanner2012}
+\citation{Megastore}
+\citation{Percolator2010}
+\citation{OmidICDE2014}
+\citation{Tephra}
+\citation{Warp}
+\citation{PattersonENAA12}
+\citation{cockroach}
+\citation{Chang2008}
+\citation{Warp}
+\citation{Escriva2012}
+\citation{cockroach}
+\citation{Tephra}
+\citation{OmidICDE2014}
+\citation{Percolator2010}
+\citation{OmidICDE2014}
+\citation{Tephra}
+\citation{cockroach}
+\citation{Spanner2012}
+\citation{YabandehCritique2012}
+\citation{Spanner2012}
+\citation{FeketeTODS2005}
+\citation{Cahill2008}
+\citation{DBLP:conf/sigmod/GrayHOS96}
+\citation{Balakrishnan2013}
+\citation{eyal2013ordering}
+\citation{Hyder}
+\citation{Camargos07sprint}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Related Work}{3}{section.3}}
+\newlabel{sec:related}{{3}{3}{Related Work}{section.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Service Semantics and Interface}{3}{section.4}}
+\newlabel{sec:semantics}{{4}{3}{Service Semantics and Interface}{section.4}{}}
+\@writefile{toc}{\contentsline {paragraph}{Semantics.}{3}{section*.3}}
+\citation{DBLP:conf/sigmod/BerensonBGMOO95}
+\@writefile{toc}{\contentsline {paragraph}{API.}{4}{section*.4}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Transaction Processing}{4}{section.5}}
+\newlabel{sec:protocol}{{5}{4}{Transaction Processing}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Data and metadata}{4}{subsection.5.1}}
+\newlabel{ssec:data-model}{{5.1}{4}{Data and metadata}{subsection.5.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces {\bf  Omid\ data and metadata}. Data is multi-versioned, with the $txid$ as the version number. The \emph  {commit field} indicates whether the data is committed, and if so, its commit timestamp. The commit table (CT) maps incomplete committed transaction ids to their respective commit timestamps. Transaction 5 has already committed and updated cf for $k_1$, but has not yet removed itself from CT; transaction 8 is still pending.\relax }}{5}{table.caption.5}}
+\newlabel{table:data-model}{{1}{5}{{\bf \sys \ data and metadata}. Data is multi-versioned, with the $txid$ as the version number. The \emph {commit field} indicates whether the data is committed, and if so, its commit timestamp. The commit table (CT) maps incomplete committed transaction ids to their respective commit timestamps. Transaction 5 has already committed and updated cf for $k_1$, but has not yet removed itself from CT; transaction 8 is still pending.\relax }{table.caption.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Client-side operation}{5}{subsection.5.2}}
+\newlabel{ssec:client-side}{{5.2}{5}{Client-side operation}{subsection.5.2}{}}
+\newlabel{l:put}{{6}{5}{Client-side operation}{subsection.5.2}{}}
+\newlabel{l:get_loop}{{9}{5}{Client-side operation}{subsection.5.2}{}}
+\newlabel{l:get_found}{{12}{5}{Client-side operation}{subsection.5.2}{}}
+\newlabel{l:get_tentative}{{18}{5}{Client-side operation}{subsection.5.2}{}}
+\newlabel{l:get_reread}{{23}{5}{Client-side operation}{subsection.5.2}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Omid's client-side code.\relax }}{5}{algorithm.1}}
+\newlabel{fig:get-pseudocode}{{1}{5}{\sys 's client-side code.\relax }{algorithm.1}{}}
+\citation{SEDAPhDThesis}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}TM operation}{6}{subsection.5.3}}
+\newlabel{ssec:server-side}{{5.3}{6}{TM operation}{subsection.5.3}{}}
+\newlabel{l:lock}{{52}{6}{TM operation}{subsection.5.3}{}}
+\newlabel{l:conflict}{{54}{6}{TM operation}{subsection.5.3}{}}
+\newlabel{l:update-start}{{56}{6}{TM operation}{subsection.5.3}{}}
+\newlabel{l:update-end}{{61}{6}{TM operation}{subsection.5.3}{}}
+\newlabel{l:possible-conflict}{{62}{6}{TM operation}{subsection.5.3}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces TM functions.\relax }}{6}{algorithm.2}}
+\newlabel{fig:commit-pseudocode}{{2}{6}{TM functions.\relax }{algorithm.2}{}}
+\citation{Lamport:1998:PP:279227.279229}
+\@writefile{toc}{\contentsline {paragraph}{Garbage collection.}{7}{section*.6}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}High Availability}{7}{section.6}}
+\newlabel{sec:ha}{{6}{7}{High Availability}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Failover and concurrent TMs}{7}{subsection.6.1}}
+\newlabel{ssec:failover}{{6.1}{7}{Failover and concurrent TMs}{subsection.6.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces {\bf  The challenge with two concurrent TMs.} An old transaction, $tx_1$, commits while a new one $tx_2$ is processed, causing $tx_2$ to see an inconsistent snapshot. \relax }}{8}{figure.caption.7}}
+\newlabel{fig:2TMs}{{2}{8}{{\bf The challenge with two concurrent TMs.} An old transaction, $tx_1$, commits while a new one $tx_2$ is processed, causing $tx_2$ to see an inconsistent snapshot. \relax }{figure.caption.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Basic HA algorithm}{8}{subsection.6.2}}
+\newlabel{ssec:basic}{{6.2}{8}{Basic HA algorithm}{subsection.6.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces {\bf  Addressing the challenge of two concurrent TMs.} The old transaction is invalidated by the new one and therefore cannot commit.\relax }}{8}{figure.caption.8}}
+\newlabel{fig:invalidate}{{3}{8}{{\bf Addressing the challenge of two concurrent TMs.} The old transaction is invalidated by the new one and therefore cannot commit.\relax }{figure.caption.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Synchronization-free normal operation}{8}{subsection.6.3}}
+\newlabel{ssec:opt}{{6.3}{8}{Synchronization-free normal operation}{subsection.6.3}{}}
+\newlabel{l:lease-start}{{68}{9}{Synchronization-free normal operation}{subsection.6.3}{}}
+\newlabel{l:lease-end}{{70}{9}{Synchronization-free normal operation}{subsection.6.3}{}}
+\newlabel{l:epoch-start}{{71}{9}{Synchronization-free normal operation}{subsection.6.3}{}}
+\newlabel{l:epoch-end}{{74}{9}{Synchronization-free normal operation}{subsection.6.3}{}}
+\newlabel{l:invalidate-present}{{83}{9}{Synchronization-free normal operation}{subsection.6.3}{}}
+\newlabel{l:invalidate-start}{{87}{9}{Synchronization-free normal operation}{subsection.6.3}{}}
+\newlabel{l:invalidate-end}{{96}{9}{Synchronization-free normal operation}{subsection.6.3}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {3}{\ignorespaces Omid's HA algorithm.\relax }}{9}{algorithm.3}}
+\newlabel{alg:ha}{{3}{9}{\sys 's HA algorithm.\relax }{algorithm.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Evaluation}{10}{section.7}}
+\newlabel{sec:eval}{{7}{10}{Evaluation}{section.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}End-to-end performance in production}{10}{subsection.7.1}}
+\newlabel{sec:prod}{{7.1}{10}{End-to-end performance in production}{subsection.7.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces {\bf  Transaction latency breakdown in production deployment of Omid\ in Sieve.} The top two components represent transaction management overhead. \relax }}{10}{figure.caption.9}}
+\newlabel{fig:sieve_latency}{{4}{10}{{\bf Transaction latency breakdown in production deployment of \sys \ in Sieve.} The top two components represent transaction management overhead. \relax }{figure.caption.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}TM microbenchmarks}{10}{subsection.7.2}}
+\newlabel{sec:synthetic}{{7.2}{10}{TM microbenchmarks}{subsection.7.2}{}}
+\citation{OmidICDE2014}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces {\bf  Scalability of Omid's CT updates with the number of HBase region servers, and comparison with Omid1.} Non-durable versions do not persist transactions and thus provide upper bounds on throughput under perfect storage scaling. \relax }}{11}{figure.caption.10}}
+\newlabel{fig:ct_thpt}{{5}{11}{{\bf Scalability of \sys 's CT updates with the number of HBase region servers, and comparison with Omid1.} Non-durable versions do not persist transactions and thus provide upper bounds on throughput under perfect storage scaling. \relax }{figure.caption.10}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.1}Commit table scalability}{11}{subsubsection.7.2.1}}
+\newlabel{ssec:ct-scale}{{7.2.1}{11}{Commit table scalability}{subsubsection.7.2.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.2}Conflict detection scalability}{11}{subsubsection.7.2.2}}
+\newlabel{ssec:mc-scale}{{7.2.2}{11}{Conflict detection scalability}{subsubsection.7.2.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.3}Latency-throughput tradeoff}{11}{subsubsection.7.2.3}}
+\newlabel{ssec:latency}{{7.2.3}{11}{Latency-throughput tradeoff}{subsubsection.7.2.3}{}}
+\citation{Percolator2010}
+\citation{OmidICDE2014}
+\newlabel{fig:1}{{6a}{12}{Conflict detection scalability\relax }{figure.caption.11}{}}
+\newlabel{sub@fig:1}{{a}{12}{Conflict detection scalability\relax }{figure.caption.11}{}}
+\newlabel{fig:2}{{6b}{12}{Conflict detection false abort rate\relax }{figure.caption.11}{}}
+\newlabel{sub@fig:2}{{b}{12}{Conflict detection false abort rate\relax }{figure.caption.11}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces {\bf  Conflict detection scalability and false abort rate.} Transaction write-set sizes are distributed power-law ($Pr[X \geq x] = x^{-\alpha }$) with exponent values of $\alpha =1.2$, $\alpha =1.6$, and $\alpha =2$ (the smaller the heavier-tailed); the key hashes are $6$4-bit integers, uniformly sampled to avoid real conflicts whp; transaction latency is $5$ms per write.\relax }}{12}{figure.caption.11}}
+\newlabel{fig:cd_perf}{{6}{12}{{\bf Conflict detection scalability and false abort rate.} Transaction write-set sizes are distributed power-law ($Pr[X \geq x] = x^{-\alpha }$) with exponent values of $\alpha =1.2$, $\alpha =1.6$, and $\alpha =2$ (the smaller the heavier-tailed); the key hashes are $6$4-bit integers, uniformly sampled to avoid real conflicts whp; transaction latency is $5$ms per write.\relax }{figure.caption.11}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces {\bf  Omid\ throughput vs.\ latency.} Client-perceived commit latency (average broken down and $90\%$ of total); single region server; power-law transaction sizes with $\alpha =1.6$; batch sizes optimized for minimum latency (in square brackets below each bar). \relax }}{12}{figure.caption.12}}
+\newlabel{fig:omid_latency}{{7}{12}{{\bf \sys \ throughput vs.\ latency.} Client-perceived commit latency (average broken down and $90\%$ of total); single region server; power-law transaction sizes with $\alpha =1.6$; batch sizes optimized for minimum latency (in square brackets below each bar). \relax }{figure.caption.12}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.4}High availability}{12}{subsubsection.7.2.4}}
+\newlabel{sec:ha-eval}{{7.2.4}{12}{High availability}{subsubsection.7.2.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces {\bf  Omid\ throughput with four failovers}; recovery takes around $4$ seconds. \relax }}{12}{figure.caption.13}}
+\newlabel{fig:ha_recovery}{{8}{12}{{\bf \sys \ throughput with four failovers}; recovery takes around $4$ seconds. \relax }{figure.caption.13}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Lessons Learned and Future Work}{12}{section.8}}
+\newlabel{sec:lessons}{{8}{12}{Lessons Learned and Future Work}{section.8}{}}
+\citation{phoenix}
+\citation{Percolator2010}
+\citation{BalakrishnanMDPWW13}
+\citation{cockroach}
+\bibstyle{acm}
+\bibdata{refs}
+\bibcite{hbase}{1}
+\bibcite{hbase-coproc}{2}
+\bibcite{phoenix}{3}
+\bibcite{zookeeper}{4}
+\bibcite{cockroach}{5}
+\bibcite{Tephra}{6}
+\bibcite{Aguilera2015}{7}
+\bibcite{Aguilera2007}{8}
+\bibcite{Megastore}{9}
+\bibcite{BalakrishnanMDPWW13}{10}
+\bibcite{Balakrishnan2013}{11}
+\bibcite{DBLP:conf/sigmod/BerensonBGMOO95}{12}
+\bibcite{Hyder}{13}
+\bibcite{Cahill2008}{14}
+\bibcite{Camargos07sprint}{15}
+\bibcite{Chang2008}{16}
+\bibcite{Spanner2012}{17}
+\bibcite{Cowling2012}{18}
+\bibcite{Dragojevic2014}{19}
+\bibcite{Dragojevic2015}{20}
+\bibcite{Escriva2012}{21}
+\bibcite{Warp}{22}
+\bibcite{eyal2013ordering}{23}
+\bibcite{FeketeTODS2005}{24}
+\bibcite{OmidICDE2014}{25}
+\bibcite{DBLP:conf/sigmod/GrayHOS96}{26}
+\bibcite{Gray:1992:TPC:573304}{27}
+\bibcite{Kraska2013}{28}
+\bibcite{Lamport:1998:PP:279227.279229}{29}
+\bibcite{PattersonENAA12}{30}
+\bibcite{Percolator2010}{31}
+\bibcite{Thomson2012}{32}
+\bibcite{Wei2015}{33}
+\bibcite{SEDAPhDThesis}{34}
+\bibcite{YabandehCritique2012}{35}
+\bibcite{DBLP:conf/sosp/ZhangSSKP15}{36}

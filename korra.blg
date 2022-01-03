@@ -1,0 +1,54 @@
+This is BibTeX, Version 0.99d (TeX Live 2016)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: korra.aux
+The style file: acm.bst
+Database file #1: refs.bib
+Warning--to sort, need author or key in Tephra
+Warning--to sort, need author or key in hbase
+Warning--to sort, need author or key in hbase-coproc
+Warning--to sort, need author or key in zookeeper
+Warning--to sort, need author or key in cockroach
+Warning--to sort, need author or key in phoenix
+Warning--can't use both volume and number fields in PattersonENAA12
+You've used 36 entries,
+            2253 wiz_defined-function locations,
+            754 strings with 11652 characters,
+and the built_in function-call counts, 15386 in all, are:
+= -- 1434
+> -- 839
+< -- 0
++ -- 349
+- -- 308
+* -- 1179
+:= -- 2323
+add.period$ -- 102
+call.type$ -- 36
+change.case$ -- 260
+chr.to.int$ -- 0
+cite$ -- 43
+duplicate$ -- 612
+empty$ -- 1202
+format.name$ -- 308
+if$ -- 3305
+int.to.chr$ -- 0
+int.to.str$ -- 36
+missing$ -- 30
+newline$ -- 177
+num.names$ -- 62
+pop$ -- 348
+preamble$ -- 1
+purify$ -- 225
+quote$ -- 0
+skip$ -- 465
+stack$ -- 0
+substring$ -- 862
+swap$ -- 209
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 142
+warning$ -- 7
+while$ -- 127
+width$ -- 38
+write$ -- 357
+(There were 7 warnings)
